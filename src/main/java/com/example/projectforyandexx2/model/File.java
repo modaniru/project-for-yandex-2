@@ -13,7 +13,6 @@ import javax.persistence.Table;
 @Table(name = "file")
 @Data
 @NoArgsConstructor
-@SuperBuilder
 public class File {
     @Id
     private String id;

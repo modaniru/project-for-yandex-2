@@ -11,15 +11,15 @@ import java.util.List;
 @RequestMapping
 public class FileValidationController {
     @Autowired
-    FileValidationExternalService service;
+    FileValidationExternalService fileValidationExternalService;
 
     @GetMapping("/node/{id}/history")
     public List<FileValidationResponseDto> getHistory(@PathVariable("id") String id
             , @RequestParam(required = false) String dateStart
             , @RequestParam(required = false) String dateEnd) {
         if (dateEnd == null || dateStart == null) {
-            return service.getHistory(id);
+            return fileValidationExternalService.getHistory(id);
         }
-        return service.getHistory(id, dateStart, dateEnd);
+        return fileValidationExternalService.getHistory(id, dateStart, dateEnd);
     }
 }

@@ -1,19 +1,21 @@
 package com.example.projectforyandexx2.utils;
 
 import com.example.projectforyandexx2.exception.RestException;
+import org.mapstruct.Mapper;
+import org.mapstruct.Named;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Component
+@Mapper
 public class DateMapper {
-    public final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX");
 
-    public Long toMilli(String date) {
+    @Named("stringDateToLong")
+    public Long stringDateToLong(String date) {
         try {
             ZonedDateTime zonedDateTime = ZonedDateTime.parse(date, formatter);
             return zonedDateTime.toInstant().toEpochMilli();
@@ -22,6 +24,7 @@ public class DateMapper {
         }
     }
 
+    @Named("longToStringDate")
     public String toString(Long milli) {
         try {
             ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(

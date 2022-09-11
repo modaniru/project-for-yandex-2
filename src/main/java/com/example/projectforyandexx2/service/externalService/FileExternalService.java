@@ -15,31 +15,34 @@ import java.util.stream.Collectors;
 @Service
 public class FileExternalService {
     @Autowired
-    FileInternalService service;
-
+    private FileInternalService fileInternalService;
     @Autowired
-    DateMapper dateMapper;
+    private DateMapper dateMapper;
     @Autowired
-    FileMapper mapper;
+    private FileMapper fileMapper;
 
     public void saveItemList(Item item) {
-        List<FileRequestDto> dtos = item.getItems().stream().peek(f -> {
-            f.setDate(item.getUpdateDate());
+        List<FileRequestDto> dtos = item.getItems().stream().peek(file -> {
+            file.setDate(item.getUpdateDate());
         }).collect(Collectors.toList());
-        service.saveFileList(dtos.stream().map(mapper::toModel).collect(Collectors.toList()));
+        fileInternalService.saveFileList(fileMapper.listToModel(dtos));
     }
 
     public FileResponseDto getFile(String id) {
-        return mapper.toDto(service.getFile(id));
+        FileResponseDto file = fileMapper.toDto(fileInternalService.getFile(id));
+        List<FileResponseDto> children = fileInternalService.getAllChild(id).stream().map(f -> getFile(f.getId())).collect(Collectors.toList());
+        if (children.isEmpty()) return file;
+        file.setChildren(children);
+        return file;
     }
 
-    public List<FileResponseDto> delete(String id) {
-        return service.delete(id).stream().map(mapper::toDto).collect(Collectors.toList());
+    public void delete(String id) {
+        fileInternalService.delete(id);
     }
 
     public List<FileResponseDto> getUpdates(String stringDate) {
-        Long date = dateMapper.toMilli(stringDate);
+        Long date = dateMapper.stringDateToLong(stringDate);
         Long dateMinusDay = dateMapper.toMilliMinusDay(stringDate);
-        return service.getUpdates(dateMinusDay, date).stream().map(mapper::toDto).collect(Collectors.toList());
+        return fileMapper.listToDto(fileInternalService.getUpdates(dateMinusDay, date));
     }
 }

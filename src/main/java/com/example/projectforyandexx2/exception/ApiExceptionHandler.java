@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ApiExceptionHandler {
     @ExceptionHandler(RestException.class)
     public ResponseEntity<Object> handleRestExceptionException(RestException restException) {
-        HttpStatus httpStatus = restException.getStatus();
+        HttpStatus httpStatus = restException.getHttpStatus();
         ApiResponseException apiException = ApiResponseException.builder()
                 .message(restException.getMessage())
                 .code(httpStatus.value()).build();

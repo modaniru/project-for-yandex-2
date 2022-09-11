@@ -1,6 +1,7 @@
 package com.example.projectforyandexx2.service.externalService;
 
 import com.example.projectforyandexx2.dto.response.FileValidationResponseDto;
+import com.example.projectforyandexx2.model.FileValidation;
 import com.example.projectforyandexx2.service.internalService.FileValidationInternalService;
 import com.example.projectforyandexx2.utils.DateMapper;
 import com.example.projectforyandexx2.utils.FileValidationMapper;
@@ -8,27 +9,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class FileValidationExternalService {
     @Autowired
-    private FileValidationInternalService service;
+    private FileValidationInternalService fileValidationInternalService;
     @Autowired
     private DateMapper dateMapper;
     @Autowired
-    private FileValidationMapper mapper;
+    private FileValidationMapper fileValidationMapper;
 
     public List<FileValidationResponseDto> getHistory(String id) {
-        return service.getFileHistory(id).stream().map(mapper::toDto).collect(Collectors.toList());
+        return fileValidationMapper.toListDto(fileValidationInternalService.getFileHistory(id));
     }
 
     public List<FileValidationResponseDto> getHistory(String id, String dateStart, String dateEnd) {
-        return service.getFileHistory(id, dateMapper.toMilli(dateStart), dateMapper.toMilli(dateEnd))
-                .stream().map(mapper::toDto).collect(Collectors.toList());
+        return fileValidationMapper.toListDto(fileValidationInternalService.getFileHistory(id, dateMapper.stringDateToLong(dateStart), dateMapper.stringDateToLong(dateEnd)));
     }
 
     public void deleteItemHistory(List<String> ids) {
-        service.deleteItemHistory(ids);
+        fileValidationInternalService.deleteItemHistory(ids);
+    }
+
+    public void saveAll(List<FileValidation> valid) {
+        fileValidationInternalService.saveAll(valid);
     }
 }

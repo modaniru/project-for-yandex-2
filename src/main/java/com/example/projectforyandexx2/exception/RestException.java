@@ -7,10 +7,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 @Setter
 public class RestException extends RuntimeException {
-    private HttpStatus status;
+    private HttpStatus httpStatus;
 
     public RestException(String message, HttpStatus status) {
         super(message);
-        this.status = status;
+        this.httpStatus = status;
     }
 }
